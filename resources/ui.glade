@@ -13,7 +13,9 @@
     <property name="website">ictu.edu.vn</property>
     <property name="website-label" translatable="yes">ICTU</property>
     <property name="authors">Trần Xuân Thanh
-Vũ Đình Dũng</property>
+Vũ Đình Dũng
+Dương Đình Thuận
+Bế Thanh Tùng</property>
     <property name="logo">logo.png</property>
     <property name="license-type">lgpl-3-0-only</property>
     <signal name="delete-event" handler="on_hide" swapped="no"/>
@@ -96,6 +98,45 @@ Vũ Đình Dũng</property>
         <property name="can-focus">False</property>
         <property name="no-show-all">True</property>
         <property name="orientation">vertical</property>
+        <property name="baseline-position">bottom</property>
+        <child>
+          <!-- n-columns=2 n-rows=1 -->
+          <object class="GtkGrid">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <child>
+              <object class="GtkSwitch" id="switch">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="halign">center</property>
+                <property name="hexpand">True</property>
+                <signal name="state-set" handler="state_set" swapped="no"/>
+              </object>
+              <packing>
+                <property name="left-attach">1</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">center</property>
+                <property name="hexpand">True</property>
+                <property name="label" translatable="yes">Dịch ảnh:</property>
+              </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
         <child>
           <object class="GtkSpinner" id="spinner">
             <property name="can-focus">False</property>
@@ -104,7 +145,7 @@ Vũ Đình Dũng</property>
           <packing>
             <property name="expand">True</property>
             <property name="fill">False</property>
-            <property name="position">0</property>
+            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -114,17 +155,6 @@ Vũ Đình Dũng</property>
           </object>
           <packing>
             <property name="expand">True</property>
-            <property name="fill">False</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkImage" id="image">
-            <property name="can-focus">False</property>
-            <property name="stock">gtk-missing-image</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
             <property name="fill">False</property>
             <property name="position">2</property>
           </packing>
@@ -146,6 +176,7 @@ Vũ Đình Dũng</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
             <property name="use-stock">True</property>
+            <property name="always-show-image">True</property>
             <signal name="clicked" handler="about" object="about" swapped="no"/>
           </object>
           <packing>

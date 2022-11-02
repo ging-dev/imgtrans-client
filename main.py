@@ -1,14 +1,19 @@
 #!/usr/bin/env python3
-from threading import Thread
-from time import sleep
-from typing import Any
+import os
+import tempfile
 import gi
+import subprocess
+from imgtrans import model, draw
+from wand.image import Image
+from threading import Thread
+from typing import Any
 
 gi.require_version("Gtk", "3.0")
-from gi.repository import Gtk, GdkPixbuf, Gdk
+from gi.repository import Gtk, Gdk
 
 class Application():
     def __init__(self) -> None:
+        self.enable_translation = False
         self.builder = Gtk.Builder()
         self.builder.add_from_file("./resources/ui.glade")
         self.builder.connect_signals(self)
@@ -18,35 +23,49 @@ class Application():
         window.show_all()
 
     def open(self, file_chooser: Gtk.FileChooserDialog) -> None:
-        file_name = file_chooser.get_filename()
+        filename = file_chooser.get_filename()
 
-        if file_name is None:
+        if filename is None:
             file_chooser.show()
             return
 
-        Thread(target=self.process_image, daemon=True, args=(file_name,)).start()
+        thread = Thread(target=self.process_image, args=(filename,))
+        thread.name = 'PaddleOCR'
+        thread.daemon = True
+        thread.start()
 
         file_chooser.unselect_all()
         file_chooser.hide()
 
-    def process_image(self, file_name: str):
-        image: Gtk.Image = self.get_object("image")
+    def state_set(self, _: Gtk.Switch, state: bool) -> None:
+        self.trans = state
+
+    def process_image(self, filename: str):
+        button: Gtk.Button = self.get_object("open_button")
         spinner: Gtk.Spinner = self.get_object("spinner")
         status: Gtk.Label = self.get_object("status")
 
-        image.hide()
+        button.hide()
         spinner.show()
-        status.set_text("Loading image...")
         status.show()
 
-        # Some works
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(filename=file_name, width=600, height=400)
-        sleep(2)
+        status.set_text("Đang nhận dạng...")
+        tboxes = model.ocr(filename, paragraph=True)
 
-        image.set_from_pixbuf(pixbuf)
+        path = os.path.join(tempfile.gettempdir(), 'result.png')
+
+        status.set_text("Đang dịch...")
+        with Image(filename=filename) as image:
+            draw.rectangle(image, tboxes, not self.enable_translation)
+            if self.enable_translation:
+                draw.translate(image, tboxes)
+            image.save(filename=path)
+
+        subprocess.Popen(["xdg-open", path])
+
         spinner.hide()
         status.hide()
-        image.show()
+        button.show()
 
     def about(self, about: Gtk.AboutDialog) -> None:
         about.show()
@@ -54,11 +73,12 @@ class Application():
     def get_object(self, name: str) -> Any:
         return self.builder.get_object(name)
 
-    def on_hide(self, widget: Gtk.Widget, event: Gdk.Event) -> bool:
+    def on_hide(self, widget: Gtk.Widget, _: Gdk.Event) -> bool:
         return widget.hide_on_delete()
 
     def main(self) -> None:
         Gtk.main()
 
-app = Application()
-app.main()
+if __name__ == "__main__":
+    app = Application()
+    app.main()
