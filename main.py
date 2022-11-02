@@ -6,7 +6,6 @@ import subprocess
 from imgtrans import model, draw
 from wand.image import Image
 from threading import Thread
-from pathlib import Path
 from typing import Any
 
 gi.require_version("Gtk", "3.0")
@@ -23,20 +22,20 @@ class Application():
         window.connect("destroy", Gtk.main_quit)
         window.show_all()
 
-    def open(self, file_chooser: Gtk.FileChooserDialog) -> None:
-        filename = file_chooser.get_filename()
+    def open(self, chooser: Gtk.FileChooserDialog) -> None:
+        chooser.show()
 
-        if filename is None or not Path(filename).is_file():
-            file_chooser.show()
-            return
+    def chooser_response_cb(self, chooser: Gtk.FileChooserDialog, response: int) -> None:
+        if response == Gtk.ResponseType.OK:
+            filename = chooser.get_filename()
+            assert isinstance(filename, str)
+            thread = Thread(target=self.process_image, args=(filename,))
+            thread.name = 'PaddleOCR'
+            thread.daemon = True
+            thread.start()
 
-        thread = Thread(target=self.process_image, args=(filename,))
-        thread.name = 'PaddleOCR'
-        thread.daemon = True
-        thread.start()
-
-        file_chooser.unselect_all()
-        file_chooser.hide()
+            chooser.unselect_all()
+            chooser.hide()
 
     def state_set(self, _: Gtk.Switch, state: bool) -> None:
         self.enable_translation = state

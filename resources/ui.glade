@@ -41,9 +41,6 @@ Bế Thanh Tùng</property>
             <property name="position">0</property>
           </packing>
         </child>
-        <child>
-          <placeholder/>
-        </child>
       </object>
     </child>
   </object>
@@ -59,7 +56,7 @@ Bế Thanh Tùng</property>
     <property name="create-folders">False</property>
     <property name="filter">filefilter1</property>
     <signal name="delete-event" handler="on_hide" swapped="no"/>
-    <signal name="file-activated" handler="open" swapped="no"/>
+    <signal name="response" handler="chooser_response_cb" swapped="no"/>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
@@ -70,10 +67,18 @@ Bế Thanh Tùng</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
+              <object class="GtkButton" id="button1">
+                <property name="label">gtk-ok</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="use-stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -82,14 +87,11 @@ Bế Thanh Tùng</property>
             <property name="position">0</property>
           </packing>
         </child>
-        <child>
-          <placeholder/>
-        </child>
       </object>
     </child>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
+    <action-widgets>
+      <action-widget response="-5">button1</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkWindow" id="main">
     <property name="visible">True</property>
