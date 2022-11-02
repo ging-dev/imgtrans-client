@@ -6,6 +6,7 @@ import subprocess
 from imgtrans import model, draw
 from wand.image import Image
 from threading import Thread
+from pathlib import Path
 from typing import Any
 
 gi.require_version("Gtk", "3.0")
@@ -25,7 +26,7 @@ class Application():
     def open(self, file_chooser: Gtk.FileChooserDialog) -> None:
         filename = file_chooser.get_filename()
 
-        if filename is None:
+        if filename is None or not Path(filename).is_file():
             file_chooser.show()
             return
 
@@ -38,7 +39,7 @@ class Application():
         file_chooser.hide()
 
     def state_set(self, _: Gtk.Switch, state: bool) -> None:
-        self.trans = state
+        self.enable_translation = state
 
     def process_image(self, filename: str):
         button: Gtk.Button = self.get_object("open_button")

@@ -56,6 +56,7 @@ Bế Thanh Tùng</property>
   <object class="GtkFileChooserDialog" id="chooser">
     <property name="can-focus">False</property>
     <property name="type-hint">dialog</property>
+    <property name="create-folders">False</property>
     <property name="filter">filefilter1</property>
     <signal name="delete-event" handler="on_hide" swapped="no"/>
     <signal name="file-activated" handler="open" swapped="no"/>
@@ -85,6 +86,9 @@ Bế Thanh Tùng</property>
           <placeholder/>
         </child>
       </object>
+    </child>
+    <child type="titlebar">
+      <placeholder/>
     </child>
   </object>
   <object class="GtkWindow" id="main">
