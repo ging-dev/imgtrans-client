@@ -1,6 +1,5 @@
 import googletrans
 from wand.image import Image
-from imgtrans.format import format_tboxes
 from imgtrans.textbox import TextBox
 
 def rectangle(image: Image, tboxes: list[TextBox], transparent: bool = False):
@@ -11,7 +10,8 @@ def rectangle(image: Image, tboxes: list[TextBox], transparent: bool = False):
         draw.fill_color = Color('white')
         if transparent:
             draw.fill_opacity = 0
-        for (x1, y1, x2, y2), _ in format_tboxes(tboxes):
+        for tbox in tboxes:
+            x1, y1, x2, y2 = tbox
             draw.rectangle(left=x1, top=y1, right=x2, bottom=y2)
         draw(image)
 
@@ -22,15 +22,14 @@ def translate(image: Image, tboxes: list[TextBox]):
     from . import constant
 
     font = Font(constant.FONT_PATH)
-    for (x1, y1, x2, y2), text in format_tboxes(tboxes):
-        text = googletrans.Translator().translate(text.lower(), dest='vi').text  # type: ignore
-        # draw to bounding box
+    for tbox in tboxes:
+        text = googletrans.Translator().translate(tbox.text.lower(), dest='vi').text  # type: ignore
         image.caption(
             text,
-            left=int(x1),
-            top=int(y1),
-            width=int(x2-x1),
-            height=int(y2-y1),
+            left=tbox.left,
+            top=tbox.top,
+            width=tbox.width,
+            height=tbox.height,
             font=font,
             gravity='center'
         )
