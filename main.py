@@ -22,26 +22,18 @@ class Application():
         window.connect("destroy", Gtk.main_quit)
         window.show_all()
 
-    def open(self, chooser: Gtk.FileChooserDialog) -> None:
-        chooser.show()
-
-    def chooser_response_cb(self, chooser: Gtk.FileChooserDialog, response: int) -> None:
-        if response == Gtk.ResponseType.OK:
-            filename = chooser.get_filename()
-            assert isinstance(filename, str)
-            thread = Thread(target=self.process_image, args=(filename,))
-            thread.name = 'PaddleOCR'
-            thread.daemon = True
-            thread.start()
-
-            chooser.unselect_all()
-            chooser.hide()
+    def on_choose_btn_file_set(self, choose: Gtk.FileChooserButton) -> None:
+        filename = choose.get_filename()
+        if filename is None:
+            return
+        thread = Thread(target=self.process_image, args=(filename,), daemon=True)
+        thread.start()
 
     def state_set(self, _: Gtk.Switch, state: bool) -> None:
         self.enable_translation = state
 
     def process_image(self, filename: str):
-        button: Gtk.Button = self.get_object("open_button")
+        button: Gtk.FileChooserButton = self.get_object("choose_btn")
         spinner: Gtk.Spinner = self.get_object("spinner")
         status: Gtk.Label = self.get_object("status")
 
@@ -65,6 +57,7 @@ class Application():
 
         spinner.hide()
         status.hide()
+        button.unselect_all()
         button.show()
 
     def about(self, about: Gtk.AboutDialog) -> None:
