@@ -20,7 +20,7 @@ from imgtrans.textbox import TextBox
 # ===========`-.`___`-.__\ \___  /__.-'_.'_.-'================
 #                         `=--=-'
 #                         Moo Fuk
-def ocr(filename: str, lang: str = 'en', paragraph: bool = False, min_dist = 25):
+def ocr(filename: str, lang: str = 'en', paragraph: bool = False) -> list[TextBox]:
     from paddleocr import PaddleOCR
     ocr = PaddleOCR(use_angle_cls=True, lang=lang, show_log=False)
     result = ocr.ocr(filename, cls=False)[0]
@@ -42,10 +42,7 @@ def ocr(filename: str, lang: str = 'en', paragraph: bool = False, min_dist = 25)
         return tboxes
 
     def merge(box1: TextBox, box2: TextBox) -> bool:
-        box1_bc = ((box1.x1+box1.x2)/2, box1.y2)
-        box2_tc = ((box2.x1+box2.x2)/2, box2.y1)
-
-        if dist(box1_bc, box2_tc) < min_dist:
+        if box2.y1 - box1.y2 < box2.height and not (box2.x2 < box1.x1 or box2.x1 > box1.x2):
             box1.x1 = min(box1.x1, box2.x1)
             box1.x2 = max(box1.x2, box2.x2)
             box1.y2 = box2.y2
