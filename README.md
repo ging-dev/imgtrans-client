@@ -1,4 +1,3 @@
 ## Bài tập môn Xử lý ảnh
 
-![](https://imgur.com/IczkMqQ.png)
-![](https://imgur.com/byxQ5yC.png)
+![](https://imgur.com/r99yBT0.png)
