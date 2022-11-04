@@ -29,8 +29,8 @@ def ocr(filename: str, lang: str = 'en', paragraph: bool = False) -> list[TextBo
     for box, [text, _] in result:
         p1, p2, _, p4 = box
 
-        w = int(dist(p1, p2))
-        h = int(dist(p1, p4))
+        w = dist(p1, p2)
+        h = dist(p1, p4)
 
         x1, y1 = p1
         x2, y2 = x1 + w, y1 + h
