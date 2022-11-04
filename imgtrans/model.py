@@ -20,17 +20,20 @@ from imgtrans.textbox import TextBox
 # ===========`-.`___`-.__\ \___  /__.-'_.'_.-'================
 #                         `=--=-'
 #                         Moo Fuk
-def ocr(filename: str, lang: str = 'en', paragraph: bool = False, min_dist = 20):
+def ocr(filename: str, lang: str = 'en', paragraph: bool = False, min_dist = 25):
     from paddleocr import PaddleOCR
     ocr = PaddleOCR(use_angle_cls=True, lang=lang, show_log=False)
-    result = ocr.ocr(filename, rec=True)[0]
+    result = ocr.ocr(filename, cls=False)[0]
 
     tboxes: list[TextBox] = []
     for box, [text, _] in result:
-        [x1, y1], _, [x2, y2], _ = box
+        p1, p2, _, p4 = box
 
-        if (y1 > y2):
-            continue
+        w = int(dist(p1, p2))
+        h = int(dist(p1, p4))
+
+        x1, y1 = p1
+        x2, y2 = x1 + w, y1 + h
 
         tbox = TextBox(x1, y1, x2, y2, text)
         tboxes.append(tbox)
