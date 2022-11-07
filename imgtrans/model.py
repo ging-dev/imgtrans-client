@@ -42,7 +42,7 @@ def ocr(filename: str, lang: str = 'en', paragraph: bool = False) -> list[TextBo
         return tboxes
 
     def merge(box1: TextBox, box2: TextBox) -> bool:
-        if box2.y1 - box1.y2 < box2.height and not (box2.x2 < box1.x1 or box2.x1 > box1.x2):
+        if box2.y1 - box1.y2 < box2.height and box2.x2 > box1.x1 and box2.x1 < box1.x2:
             box1.x1 = min(box1.x1, box2.x1)
             box1.x2 = max(box1.x2, box2.x2)
             box1.y2 = box2.y2
